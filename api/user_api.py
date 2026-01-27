@@ -7,9 +7,9 @@ class UserApi(CustomRequester):
     def __init__(self, session):
         super().__init__(session=session, base_url=AUTH_URL)
 
-    def get_user_info(self, user_id, expected_status):
+    def get_user_info_by_id(self, user_id, expected_status=200):
         """
-        Получение информации о пользователе.
+        Получение информации о пользователе по ID.
         :param user_id: ID пользователя.
         :param expected_status: Ожидаемый статус-код.
         """
@@ -19,7 +19,21 @@ class UserApi(CustomRequester):
             expected_status=expected_status
         )
 
-    def delete_user(self, user_id, expected_status):
+    def create_user(self, user_data, expected_status=201):
+        """
+        Создание пользователя
+        :param user_data: тело запроса для создания пользователя
+        :param expected_status: ожидаемый статус код
+        """
+        return self.send_request(
+            method="POST",
+            endpoint=ENDPOINT_USER,
+            data=user_data,
+            expected_status=expected_status
+
+        )
+
+    def delete_user(self, user_id, expected_status=200):
         """
         Удаление пользователя.
         :param user_id: ID пользователя.

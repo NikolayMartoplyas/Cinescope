@@ -5,7 +5,7 @@ class MoviesApi(CustomRequester):
     def __init__(self, session):
         super().__init__(session=session, base_url=MOVIE_URL)
 
-    def get_poster_movie(self, params, expected_status):
+    def get_movie(self, params, expected_status=200):
         """
         Получение афиши фильма
         :param params: Данные для фильтрации фильмов
@@ -19,7 +19,7 @@ class MoviesApi(CustomRequester):
             expected_status=expected_status
         )
 
-    def creating_movie_poster(self, data_movie, expected_status):
+    def create_movie(self, data_movie, expected_status=201):
         """
         Создание афиши фильма
         :param data_film: данные для создания фильма
@@ -32,7 +32,7 @@ class MoviesApi(CustomRequester):
             expected_status=expected_status
         )
 
-    def get_movie_by_id(self, movie_id, expected_status):
+    def get_movie_by_id(self, movie_id, expected_status=200):
         """
         Получение фильма по ID
         :param movie_id: ID созданного фильма
@@ -44,7 +44,7 @@ class MoviesApi(CustomRequester):
             expected_status=expected_status
         )
 
-    def delete_movie(self, movie_id, expected_status):
+    def delete_movie(self, movie_id, expected_status=200):
         """
         Удаление фильма по ID
         :param movie_id: ID созданного фильма
@@ -56,7 +56,7 @@ class MoviesApi(CustomRequester):
             expected_status=expected_status
         )
 
-    def editing_a_movie_by_id(self, movie_id, new_movie, expected_status):
+    def update_movie_by_id(self, movie_id, new_movie, expected_status=200):
         """
         Редактирование афиши фильма
         :param movie_id: ID созданного фильма
@@ -64,7 +64,7 @@ class MoviesApi(CustomRequester):
         :param expected_status: Ожидаемый статус код
         """
         return self.send_request(
-            method="patch",
+            method="PATCH",
             endpoint=f"{ENDPOINT_MOVIES}/{movie_id}",
             data=new_movie,
             expected_status=expected_status

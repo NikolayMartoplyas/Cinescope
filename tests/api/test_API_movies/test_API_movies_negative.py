@@ -1,6 +1,8 @@
 import requests
 from faker import Faker
 
+import api.api_manager
+
 faker = Faker()
 class TestApiMoviesNegative:
 
@@ -16,14 +18,14 @@ class TestApiMoviesNegative:
             'genreId': 1,
             'createdAt': 'asc'
         }
-        response = auth_manager.movies_api.get_poster_movie(payload, 400)
+        response = auth_manager.movies_api.get_movie(payload, 400)
         message = response.json().get("message")
         assert message[0] == "Поле pageSize имеет максимальную величину 20", "Сообщения не совпадают"
         assert message[1] == "Поле pageSize имеет минимальную величину 1", "Сообщения не совпадают"
         assert message[2] == "Поле pageSize должно быть числом", "Сообщения не совпадают"
 
-    def test_creating_a_movie_poster_with_incorrect_parameters(self, auth_manager):
-        """Создание постера с некорректными параметрами"""
+    def test_create_movie_with_incorrect_parameters(self, auth_manager):
+        """Создание фильма с некорректными параметрами"""
         request_body = {
             "name": 22,
             "imageUrl": "https://image.url",
@@ -33,25 +35,32 @@ class TestApiMoviesNegative:
             "published": faker.boolean(),
             "genreId": 1
         }
-        response = auth_manager.movies_api.creating_movie_poster(request_body, 400)
+        response = auth_manager.movies_api.create_movie(request_body, 400)
         message = response.json().get("message")
         assert message[0] == "Поле name должно быть строкой", "Сообщения не совпадают"
 
-    def test_creation_of_a_poster_by_an_unauthorized_user(self,anon_manager, movie_data):
-        """Создание постера с неавторизованым пользователем"""
-        response = anon_manager.movies_api.creating_movie_poster(movie_data, 401)
+    def test_creation_movie_unauthorized_user(self,anon_manager, movie_data):
+        """Создание фильма с неавторизованым пользователем"""
+        response = anon_manager.movies_api.create_movie(movie_data, 401)
         message = response.json().get("message")
         assert message == "Unauthorized", f"Ошибка ожидали сообщение Unauthorized, получили {message}"
 
-    def test_deleting_a_user_with_an_unauthorized_user(self,anon_manager, create_movie):
+    def test_deleting_movie_unauthorized_user(self,anon_manager, create_movie):
         """Удаление фильма неавторизованым пользователем"""
         response = anon_manager.movies_api.delete_movie(create_movie["id"], 401)
         data_response = response.json().get("message")
         assert data_response == "Unauthorized", f"Ошибка ожидали сообщение Unauthorized, олучили {data_response}"
 
-    def test_editing_a_movie_by_an_unauthorized_user(self,anon_manager, create_movie, movie_data):
+    def test_update_movie_unauthorized_user(self, anon_manager, create_movie, movie_data):
         """Редактирование фильма неавторизованым пользователем"""
         new_response_body = movie_data
-        response = anon_manager.movies_api.editing_a_movie_by_id(create_movie["id"], new_response_body, 401)
+        response = anon_manager.movies_api.update_movie_by_id(create_movie["id"], new_response_body, 401)
         data_response = response.json().get("message")
-        assert data_response == "Unauthorized", f"Ошибка ожидали сообщение Unauthorized, олучили {data_response}"
+        assert data_response == "Unauthorized", f"Ошибка ожидали сообщение Unauthorized, получили {data_response}"
+
+    def test_create_film_existing_title(self, auth_manager, create_movie, movie_data):
+        """Создание фильма с уже существующим названием"""
+        response = auth_manager.movies_api.create_movie(movie_data, 409)
+        assert response.status_code == 409, "Ошибка, ожидалось что создать фильм  таким же названием невозможно"
+
+

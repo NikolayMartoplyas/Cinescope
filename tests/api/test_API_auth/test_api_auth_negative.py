@@ -23,7 +23,7 @@ class TestApiAuthNegative:
         message = response.json().get("message")
         assert message == "Пользователь с таким email уже зарегистрирован", "сообщения не совпадают"
 
-    def test_authorization_with_an_invalid_email(self,api_manager, create_user):
+    def test_authorization_user_invalid_email(self,api_manager, create_user):
         """Авторизация пользователя с несущевствующим email"""
         login_data = {
             "email": "123Vinrnzzxxaabh@gmail.com",

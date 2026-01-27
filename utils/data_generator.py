@@ -33,5 +33,18 @@ class DataGenerator:
 
         return ''.join(password)
 
+    @staticmethod
+    def generete_random_movie():
+        """Генератор афиши фильма"""
+        return {
+            "name": f"{faker.company()} - {faker.catch_phrase()}",
+            "imageUrl": "https://image.url",
+            "price": faker.random_int(100, 1000),
+            "description": faker.text(max_nb_chars=100),
+            "location": "SPB",
+            "published": faker.boolean(),
+            "genreId": faker.random_int(1, 10)
+        }
+
 
 
