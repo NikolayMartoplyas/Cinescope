@@ -22,7 +22,7 @@ class TestApiPositive:
         assert "pageSize" in data_response, "Ошибка, отсутсвует ключ pageSize"
 
     def test_create_movie(self, auth_manager, movie_data):
-        """Создание афиши фильма"""
+        """Создание фильма"""
         response = auth_manager.movies_api.create_movie(movie_data)
         data_response = response.json()
         assert data_response["name"] == movie_data["name"], "Ошибка Названия не совпадают"

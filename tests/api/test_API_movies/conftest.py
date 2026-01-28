@@ -36,7 +36,9 @@ def create_movie(auth_manager, movie_data):
     id = data_response["id"]
     yield {"id": id, "create_movie": data_response}
     try:
-        auth_manager.movies_api.get_movie_by_id(id)
+        response = auth_manager.movies_api.get_movie_by_id(id)
+        if response.status_code == 200:
+            auth_manager.movies_api.delete_movie(id)
     except Exception as e:
         print("Фильм удален в тесте")
 
