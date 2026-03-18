@@ -1,19 +1,12 @@
 from faker import Faker
 import pytest
 import requests
-
 from api.api_manager import ManagerApi
 from constants import *
 from utils.data_generator import DataGenerator
+from models.model_movies import MoviesModelResponse
 
 faker = Faker("ru_RU")
-@pytest.fixture(scope="session")
-def base_session():
-    """Базовая сессия"""
-    session = requests.Session()
-    yield session
-    session.close()
-
 @pytest.fixture(scope="session")
 def anon_manager():
     """менеджер для неавторизованных запросов"""
@@ -21,24 +14,17 @@ def anon_manager():
     session.headers.update(HEADERS)
     return ManagerApi(session)
 
-@pytest.fixture(scope="session")
-def auth_manager(base_session):
-    """менеджер для авторизованых запросов"""
-    api_manager = ManagerApi(base_session)
-    api_manager.auth_api.login_user(AUTH_DATE, 200)
-    return api_manager
-
 @pytest.fixture()
-def create_movie(auth_manager, movie_data):
+def create_movie(super_admin, movie_data):
     """Создание афиши фильма и удаление фильма после выполнения теста"""
-    response = auth_manager.movies_api.create_movie(movie_data)
-    data_response = response.json()
-    id = data_response["id"]
-    yield {"id": id, "create_movie": data_response}
+    response = super_admin.api.movies_api.create_movie(movie_data.model_dump())
+    validate_movies = MoviesModelResponse.model_validate(response.json())
+    yield validate_movies
     try:
-        response = auth_manager.movies_api.get_movie_by_id(id)
-        if response.status_code == 200:
-            auth_manager.movies_api.delete_movie(id)
+        get_response = super_admin.api.movies_api.get_movie_by_id(validate_movies.id)
+        if get_response.status_code in (201, 200):
+            super_admin.api.movies_api.delete_movie(validate_movies.id)
+            print("Фильм удален в фикстуре")
     except Exception as e:
         print("Фильм удален в тесте")
 
@@ -46,3 +32,14 @@ def create_movie(auth_manager, movie_data):
 def movie_data():
     """Генератор афиши фильма"""
     return DataGenerator.generete_random_movie()
+
+@pytest.fixture()
+def movie_data_in_db():
+    """Генератор афиши фильма для БД"""
+    return DataGenerator.generete_random_movie_in_db()
+
+@pytest.fixture()
+def validation_fields():
+    return {"name", "imageUrl", "price", "description", "location", "published", "genreId"}
+
+

@@ -35,5 +35,5 @@ class AuthApi(CustomRequester):
         token = response.json().get("accessToken")
         assert token is not None, "Токен не найден"
         self._update_session_headers(Authorization=f"Bearer {token}")
-        return self
+        return response
 

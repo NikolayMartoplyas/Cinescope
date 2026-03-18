@@ -7,7 +7,7 @@ class UserApi(CustomRequester):
     def __init__(self, session):
         super().__init__(session=session, base_url=AUTH_URL)
 
-    def get_user_info_by_id(self, user_id, expected_status=200):
+    def get_user_info_by_locator(self, user_idOrEmail, expected_status=200):
         """
         Получение информации о пользователе по ID.
         :param user_id: ID пользователя.
@@ -15,7 +15,7 @@ class UserApi(CustomRequester):
         """
         return self.send_request(
             method="GET",
-            endpoint=f"{ENDPOINT_USER}/{user_id}",
+            endpoint=f"{ENDPOINT_USER}/{user_idOrEmail}",
             expected_status=expected_status
         )
 
@@ -30,7 +30,6 @@ class UserApi(CustomRequester):
             endpoint=ENDPOINT_USER,
             data=user_data,
             expected_status=expected_status
-
         )
 
     def delete_user(self, user_id, expected_status=200):

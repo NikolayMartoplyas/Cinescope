@@ -1,11 +1,12 @@
+import datetime
 import random
 import string
-
 from faker import Faker
+from models.model_movies import MoviesModel
 
 faker = Faker()
-class DataGenerator:
 
+class DataGenerator:
 
     @staticmethod
     def generate_random_email():
@@ -34,17 +35,30 @@ class DataGenerator:
         return ''.join(password)
 
     @staticmethod
-    def generete_random_movie():
+    def generete_random_movie() -> MoviesModel:
         """Генератор афиши фильма"""
+        return MoviesModel(
+            name=f"{faker.company()} - {faker.catch_phrase()}",
+            imageUrl= "https://image.url",
+            price= faker.random_int(100, 1000),
+            description= faker.text(max_nb_chars=100),
+            location= random.choice(["MSK", "SPB"]),
+            published= faker.boolean(),
+            genreId= faker.random_int(1, 10)
+        )
+
+    @staticmethod
+    def generete_random_movie_in_db():
+        """Генератор афиши фильма для БД"""
         return {
             "name": f"{faker.company()} - {faker.catch_phrase()}",
-            "imageUrl": "https://image.url",
+            "image_url": "https://image.url",
             "price": faker.random_int(100, 1000),
             "description": faker.text(max_nb_chars=100),
-            "location": "SPB",
+            "location": random.choice(["MSK", "SPB"]),
             "published": faker.boolean(),
-            "genreId": faker.random_int(1, 10)
+            "rating": faker.random_int(1, 10),
+            "genre_id": faker.random_int(1, 10),
+            "created_at": datetime.datetime.now()
         }
-
-
 

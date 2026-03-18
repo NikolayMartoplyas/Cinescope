@@ -1,32 +1,35 @@
 import pytest
-from api.api_manager import ManagerApi
+from models.model_user import RegisterUserResponse, LoginUserResponse
 
 @pytest.mark.order(1)
 class TestAuth:
 
-    def test_register_user(self, api_manager: ManagerApi, create_user):
+    def test_register_user(self, super_admin, create_user_data):
         """Регистрация пользователя"""
-        response = api_manager.auth_api.register_user(create_user, 201)
-        response_data = response.json()
-        assert "id" in response_data, "Поле id отсутсвует"
-        assert response_data["email"] == create_user["email"], "Еmail не совпадает"
-        assert response_data["fullName"] == create_user["fullName"], "Имя не совпадает"
-        assert "verified" in response_data, "Поле не найдено"
-        assert response_data["roles"][0] == "USER", "Роль не совпадает"
-        assert "createdAt" in response_data, "Поле дата регистрации не найдено"
+        validation_fields = {"email", "fullName", "roles", "verified"}
+        response = super_admin.api.auth_api.register_user(create_user_data.model_dump())
+        data_user = RegisterUserResponse.model_validate(response.json())
+        actual = data_user.model_dump(include=validation_fields, mode="json")
+        expected = create_user_data.model_dump(include=validation_fields)
 
-    def test_authorization_user(self, api_manager, registered_user, create_user):
+        assert actual == expected
+        assert data_user.id is not None, "Поле id отсутсвует"
+        assert data_user.createdAt is not None, "Поле дата регистрации не найдено"
+
+        super_admin.api.user_api.delete_user(data_user.id)#удаление пользователя для освобождения ресурса
+
+    def test_authorization_user(self, super_admin, registered_user, create_user_data):
         """Авторизация зарегестрированого пользователя"""
+        validation_fields = {"email", "fullName", "roles"}
         login_data = {
-            "email": create_user["email"],
-            "password": create_user["password"]
+            "email": create_user_data.email,
+            "password": create_user_data.password
         }
-        response = api_manager.auth_api.login_user(login_data, 200)
-        authorization_data = response.json()
-        assert "id" in authorization_data["user"], "Поле ID ненайдено"
-        assert "email" in authorization_data["user"], "Поле email ненайдено"
-        assert "fullName" in authorization_data["user"], "Поле fullName ненайдено"
-        assert "roles" in authorization_data["user"], "Поле roles ненайдено"
-        assert "accessToken" is not None, "Токен не обнаружен"
-        assert "refreshToken" is not None, "Рефреш токен не обнаружен"
-        assert "expiresIn" is not None, "Данные не обнаружены"
+        response = super_admin.api.auth_api.login_user(login_data)
+        data_user = LoginUserResponse.model_validate(response.json())
+        actual = data_user.user.model_dump(include=validation_fields, mode="json")
+        expected = create_user_data.model_dump(include=validation_fields)
+        assert data_user.user.id is not None, "Поле ID ненайдено"
+        assert actual == expected
+        assert data_user.refreshToken is not None, "Рефреш токен не обнаружен"
+        assert data_user.expiresIn is not None, "Данные не обнаружены"
