@@ -6,6 +6,7 @@ ENDPOINT_LOGIN = "/login"
 ENDPOINT_REGISTER = "/register"
 ENDPOINT_USER = "/user"
 
+
 HEADERS = {
     "Content-Type": "application/json",
     "Accept": "application/json"
