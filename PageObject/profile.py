@@ -15,12 +15,12 @@ class PageProfile(BasePage):
 
     @allure.step("Вход на страницу профиля")
     def open_page_profile(self):
-        self.page.goto(self.url_profile)
+        self.open_url(self.url_profile)
 
     @allure.step("Выход из профиля")
     def logout(self):
-        self.logout_button.click()
+        self.click_element(self.logout_button)
 
     @allure.step("Проверка что мы вышли из профиля")
     def check_logout(self):
-        expect(self.login_button).to_be_enabled()
+        self.check_element(self.login_button)

@@ -22,13 +22,17 @@ class MovieCard(BasePage):
 
     @allure.step("Написание отзыва")
     def write_review(self, review):
-       self.reviw_field.fill(review)
+       self.enter_text_to_element(self.reviw_field, review)
 
     @allure.step("Отправление отзыва")
     def click_button_send(self):
-        self.button_send.click()
+        self.click_element(self.button_send)
 
-    @allure.step("удалияем коментарий")
+    @allure.step("удалияем отзыв")
     def delete_review(self):
-        self.kebab_menu.click()
-        self.button_delete.click()
+        self.click_element(self.kebab_menu)
+        self.click_element(self.button_delete)
+
+    @allure.step("Проверка видимости поля для отзыва")
+    def check_feedback_field(self) -> bool:
+        return self.check_element(self.reviw_field)

@@ -14,26 +14,26 @@ class AllMovies(BasePage):
         self.selected_location = page.get_by_text("MSK")
         self.selected_genre = page.get_by_text("Комедия")
         self.selected_sorting = page.get_by_text("Новые")
-        self.details_button = page.locator("a[href='/movies/40790'] button")
+        self.card_movie = page.locator(".rounded-xl.border.bg-card").first
 
 
     @allure.step("Выибор фильтра место")
     def select_filter_location(self):
-        self.filter_place.click()
-        self.selected_location.click()
+        self.click_element(self.filter_place)
+        self.click_element(self.selected_location)
 
     @allure.step("Выбираем фильтр жанр")
     def select_filter_genre(self):
-        self.filter_genre.click()
-        self.selected_genre.click()
+        self.click_element(self.filter_genre)
+        self.click_element(self.selected_genre)
 
     @allure.step("Выбираем сортировку")
     def select_sorting(self):
-        self.filter_created.click()
-        self.selected_sorting.click()
+        self.click_element(self.filter_created)
+        self.click_element(self.selected_sorting)
 
     @allure.step("Нажимаем кнопку 'Подробнее' на карточке фильма")
     def click_button_details(self):
-        self.details_button.click()
+        self.card_movie.get_by_role("button", name="Подробнее").click()
 
 
