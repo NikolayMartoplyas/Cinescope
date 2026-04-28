@@ -62,3 +62,8 @@ class DataGenerator:
             "created_at": datetime.datetime.now()
         }
 
+    @staticmethod
+    def review():
+        """Генератор текста для отзыва"""
+        return faker.paragraph(nb_sentences=2)
+

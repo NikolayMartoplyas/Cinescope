@@ -1,14 +1,11 @@
 import allure
-
+import pytest
 from resources.user_creds import SuperAdminCreds
 from PageObject.cinescope_register import CinescopeRegisterPage
 from PageObject.cinescope_login import CinescopeLogin
-from faker import Faker
 from utils.data_generator import DataGenerator
 
-
-faker = Faker()
-
+@pytest.mark.ui
 @allure.epic("Тестирование UI")
 @allure.story("Тестирование формы регистрации и авторизации")
 class TestUI:

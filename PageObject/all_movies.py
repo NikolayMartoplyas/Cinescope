@@ -17,7 +17,7 @@ class AllMovies(BasePage):
         self.card_movie = page.locator(".rounded-xl.border.bg-card").first
 
 
-    @allure.step("Выибор фильтра место")
+    @allure.step("Выибор фильтра: место")
     def select_filter_location(self):
         self.click_element(self.filter_place)
         self.click_element(self.selected_location)

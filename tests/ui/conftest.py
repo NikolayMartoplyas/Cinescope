@@ -1,5 +1,9 @@
+import allure
 import pytest
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
+
+from PageObject.all_movies import AllMovies
+from PageObject.page_movie_card import MovieCard
 from common.tools import Tools
 from utils.data_generator import DataGenerator
 from PageObject.cinescope_register import CinescopeRegisterPage
@@ -59,3 +63,26 @@ def login_super_admin(page):
     profile.open_page_profile()
     profile.logout()
     profile.check_logout()
+
+@pytest.fixture(scope="function")
+def delete_review(login_super_admin):
+    """Удаление отзыва в фильме"""
+    page = login_super_admin
+    with allure.step("Создание экземпляров класса"):
+        card_movie = MovieCard(page)
+        page_movies = AllMovies(page)
+
+    with allure.step("Выбор фильма"):
+        page_movies.go_to_all_movies()
+        page_movies.select_filter_location()
+        page_movies.select_filter_genre()
+        page_movies.select_sorting()
+        page_movies.click_button_details()
+
+    with allure.step("Проверка видимости поля для отзыва"):
+        check_text = card_movie.check_feedback_field()
+        if not check_text:
+            card_movie.delete_review()
+            expect(card_movie.review_field).not_to_be_visible()
+
+        yield page

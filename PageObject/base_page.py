@@ -12,7 +12,7 @@ class BasePage(PageActions):
         self.email = page.get_by_role("textbox", name="Email")
         self.password = page.get_by_role("textbox", name="Пароль", exact=True)
 
-    @allure.step("переход на глаыную страницу")
+    @allure.step("переход на главную страницу")
     def go_to_home_page(self):
         self.click_element(self.home_button)
         self.wait_redirect_for_url(self.base_url)

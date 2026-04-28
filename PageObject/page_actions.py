@@ -30,20 +30,23 @@ class PageActions:
 
     @allure.step("Проверка видимости элемента")
     def check_element(self, locator: str):
-        try:
-            self.wait_for_element(locator)
-            return locator.is_visible()
-        except:
-            return False
+        return locator.is_visible()
 
-    @allure.step("Скриншот текущей страиницы")
+    @allure.step("Скриншот текущей страницы")
     def make_screenshot_and_attach_to_allure(self):
-        screenshot_path = "screenshot.png"
-        self.page.screenshot(path=screenshot_path, full_page=True)  # full_page=True для скриншота всей страницы
-
-        # Прикрепление скриншота к Allure-отчёту
-        with open(screenshot_path, "rb") as file:
-            allure.attach(file.read(), name="Screenshot after redirect", attachment_type=allure.attachment_type.PNG)
+        screenshot_bytes = self.page.screenshot(full_page=True)
+        # Прикрепляем напрямую к Allure
+        allure.attach(
+            screenshot_bytes,
+            name="Screenshot after redirect",
+            attachment_type=allure.attachment_type.PNG
+        )
+        # screenshot_path = "screenshot.png"
+        # self.page.screenshot(path=screenshot_path, full_page=True)  # full_page=True для скриншота всей страницы
+        #
+        # # Прикрепление скриншота к Allure-отчёту
+        # with open(screenshot_path, "rb") as file:
+        #     allure.attach(file.read(), name="Screenshot after redirect", attachment_type=allure.attachment_type.PNG)
 
     @allure.step("Проверка всплывающего сообщения c текстом: {text}")
     def check_pop_up_element_with_text(self, text: str) -> bool:
